@@ -1,5 +1,5 @@
 # Jenkins
-Tutorial and cheatsheet for Jenkins based on [this](https://www.linkedin.com/learning/jenkins-essential-training) awesome online course.
+Tutorial and cheatsheet for Jenkins.
 
 ## CI/CD Concept Definitions
 ![](images/cdicd.png)
@@ -12,3 +12,13 @@ Tutorial and cheatsheet for Jenkins based on [this](https://www.linkedin.com/lea
 - Deployment, the whole pipeline is automated
 
 
+
+## Run Jenkins on Docker
+```
+docker volume create jenkins_persist
+docker container run -d \
+    -p 8080:8080 \
+    -v jenkins_persist:/var/jenkins_home \
+    --name jenkins-local \
+    jenkins/jenkins:lts
+```
