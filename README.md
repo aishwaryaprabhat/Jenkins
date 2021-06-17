@@ -50,17 +50,23 @@ RUN mkdir -p /tmp/download && \
  rm -rf /tmp/download && \
  groupadd -g 999 docker && \
  usermod -aG staff,docker jenkins
-
-USER jenkins
 ```
+`docker build . -t jenkins-docker -f Dockerfile-Jenkins`
 - If volume doesn't already exist, create volume
 ```
 docker volume create jenkins_persist
 ```
 - Run Jenkins on Docker container with the right volumes mounted
 ```
-docker run -p 8080:8080 -p 5000:5000 -v jenkins_persist:/var/jenkins_home -v /var/run/docker.sock:/var/run/docker/sock --name jenkins -d jenkins-docker
+docker run -p 8080:8080 -p 5000:5000 -v jenkins_persist:/var/jenkins_home -v /var/run/docker.sock:/var/run/docker.sock --name jenkins -d jenkins-docker
 ```
+- Verify that Dockeer is accessible from within the container
+```
+docker exec -it jenkins sh
+### Inside container ###
+docker ps
+```
+![](images/jenkinsdocker.png)
 
 ## Jenkins DSL
 ### What is Jenkins DSL?
