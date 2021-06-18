@@ -119,5 +119,29 @@ job('NodeJS example') {
 - Install Job DSL plugin
 - Configure job
 ![](images/dsl1.png)
-![](images/dsl2.png)
+![](images/dsl3.png)
 - We need script approval (safety mechanism) before we can use the script
+```
+Started by user Aishwarya Prabhat
+Running as SYSTEM
+Building in workspace /var/jenkins_home/workspace/seed project
+The recommended git tool is: NONE
+No credentials specified
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/seed project/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/aishwaryaprabhat/Jenkins # timeout=10
+Fetching upstream changes from https://github.com/aishwaryaprabhat/Jenkins
+ > git --version # timeout=10
+ > git --version # 'git version 2.20.1'
+ > git fetch --tags --force --progress -- https://github.com/aishwaryaprabhat/Jenkins +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse origin/main^{commit} # timeout=10
+Checking out Revision 04bd2d59dec3ac0abb67338be850a91a409c694b (origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 04bd2d59dec3ac0abb67338be850a91a409c694b # timeout=10
+Commit message: "corrected DSL example"
+ > git rev-list --no-walk 6ccae0e26745d593f2f4193cfd0a24c2fc206c81 # timeout=10
+Processing DSL script nodejs.groovy
+ERROR: script not yet approved for use
+Finished: FAILURE
+```
+  - Manage Jenkins -> In Process Script Approval -> Approve
