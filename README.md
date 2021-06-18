@@ -175,3 +175,76 @@ job('NodeJS Docker example') {
     }
 }
 ```
+
+## Jenkins Pipelines
+- Allow you to write the build steps in code
+- Code means you can put this code in version control
+![](images/automating.png)
+- Can be written in Jenkins DSL (declarative pipeline) or in groovy (scripted pipeline)
+
+### Pipelines vs Job DSL
+- Both have the capability to write all your CI/CD in code
+- The difference is in implementation in Jenkins
+- DSLs create new jobs based on the code you write
+- Pipelines is a job type, you can create a Jenkins pipeline job that will handle the build/test/deployment of one project
+
+### Example 1
+![](images/pipeline.png)
+
+### Example 2
+```
+node {
+   def commit_id
+   stage('Preparation') {
+     checkout scm
+     sh "git rev-parse --short HEAD > .git/commit-id"                        
+     commit_id = readFile('.git/commit-id').trim()
+   }
+   stage('test') {
+     nodejs(nodeJSInstallationName: 'nodejs') {
+       sh 'npm install --only=dev'
+       sh 'npm test'
+     }
+   }
+   stage('docker build/push') {
+     docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
+       def app = docker.build("wardviaene/docker-nodejs-demo:${commit_id}", '.').push()
+     }
+   }
+}
+```
+
+### Example 3: Build, test and run everything in a Docker container
+```
+node {
+   def commit_id
+   stage('Preparation') {
+     checkout scm
+     sh "git rev-parse --short HEAD > .git/commit-id"
+     commit_id = readFile('.git/commit-id').trim()
+   }
+   stage('test') {
+     def myTestContainer = docker.image('node:4.6')
+     myTestContainer.pull()
+     myTestContainer.inside {
+       sh 'npm install --only=dev'
+       sh 'npm test'
+     }
+   }
+   stage('test with a DB') {
+     def mysql = docker.image('mysql').run("-e MYSQL_ALLOW_EMPTY_PASSWORD=yes") 
+     def myTestContainer = docker.image('node:4.6')
+     myTestContainer.pull()
+     myTestContainer.inside("--link ${mysql.id}:mysql") { // using linking, mysql will be available at host: mysql, port: 3306
+          sh 'npm install --only=dev' 
+          sh 'npm test'                     
+     }                                   
+     mysql.stop()
+   }                                     
+   stage('docker build/push') {            
+     docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
+       def app = docker.build("wardviaene/docker-nodejs-demo:${commit_id}", '.').push()
+     }                                     
+   }                                       
+} 
+```
