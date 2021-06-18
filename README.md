@@ -82,7 +82,7 @@ docker ps
 - DSL plugin solves this problem
 - Additional benefits: version control, history, audit log, easier job restore when something goes wrong
 
-### Example
+### Example 1: Simple commands
 ```
 job('NodeJS example') {
     scm {
@@ -115,7 +115,7 @@ job('NodeJS example') {
 - steps
   - the actual steps to run 
 
-### How to use?
+#### How to use?
 - Install Job DSL plugin
 - Configure job
 ![](images/dsl1.png)
@@ -145,3 +145,33 @@ ERROR: script not yet approved for use
 Finished: FAILURE
 ```
   - Manage Jenkins -> In Process Script Approval -> Approve
+
+### Example 2: Docker build and push
+```
+job('NodeJS Docker example') {
+    scm {
+        git('git://github.com/wardviaene/docker-demo.git') {  node -> // is hudson.plugins.git.GitSCM
+            node / gitConfigName('DSL User')
+            node / gitConfigEmail('jenkins-dsl@newtech.academy')
+        }
+    }
+    triggers {
+        scm('H/5 * * * *')
+    }
+    wrappers {
+        nodejs('nodejs') // this is the name of the NodeJS installation in 
+                         // Manage Jenkins -> Configure Tools -> NodeJS Installations -> Name
+    }
+    steps {
+        dockerBuildAndPublish {
+            repositoryName('wardviaene/docker-nodejs-demo')
+            tag('${GIT_REVISION,length=9}')
+            registryCredentials('dockerhub')
+            forcePull(false)
+            forceTag(false)
+            createFingerprints(false)
+            skipDecorate()
+        }
+    }
+}
+```
