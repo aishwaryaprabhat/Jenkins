@@ -248,3 +248,6 @@ node {
    }                                       
 } 
 ```
+- test and test with a DB stages are pulling a container and running everything inside it
+- The rest is the same
+
