@@ -103,3 +103,21 @@ job('NodeJS example') {
     }
 }
 ```
+- Creates one job based on the job
+- scm (software config management)
+  - we define address of git repo
+  - name and email are used to configure the git client
+  - job will fail without this
+- triggers
+  - how often will we build it? (every 5 mins)
+- wrappers
+  - this is specifically for 'importing' the nodejs plugin and the nodejs we install
+- steps
+  - the actual steps to run 
+
+### How to use?
+- Install Job DSL plugin
+- Configure job
+![](images/dsl1.png)
+![](images/dsl2.png)
+- We need script approval (safety mechanism) before we can use the script
