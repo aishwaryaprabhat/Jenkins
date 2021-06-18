@@ -37,7 +37,7 @@ docker container exec \
 - Go to `http://localhost:8080`
 ![](images/home.png)
 
-### Jenkins that can talk to Docker on your system
+### Jenkins inside a Docker container that can talk to Docker on your system
 - Install Docker on based jenkins image
 ```
 FROM jenkins/jenkins:lts
@@ -81,3 +81,25 @@ docker ps
 - When the jobs grow, maintaing becomes difficult and requires a lot of manual work
 - DSL plugin solves this problem
 - Additional benefits: version control, history, audit log, easier job restore when something goes wrong
+
+### Example
+```
+job('NodeJS example') {
+    scm {
+        git('git://github.com/wardviaene/docker-demo.git') {  node -> // is hudson.plugins.git.GitSCM
+            node / gitConfigName('DSL User')
+            node / gitConfigEmail('jenkins-dsl@newtech.academy')
+        }
+    }
+    triggers {
+        scm('H/5 * * * *')
+    }
+    wrappers {
+        nodejs('nodejs') // this is the name of the NodeJS installation in 
+                         // Manage Jenkins -> Configure Tools -> NodeJS Installations -> Name
+    }
+    steps {
+        shell("npm install")
+    }
+}
+```
